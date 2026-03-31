@@ -471,7 +471,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
           ...(codexHomePath ? { CODEX_HOME: codexHomePath } : {}),
         },
         stdio: ["pipe", "pipe", "pipe"],
-        shell: process.platform === "win32",
+        shell: false,
       });
       const output = readline.createInterface({ input: child.stdout });
 
@@ -1534,7 +1534,7 @@ function assertSupportedCodexCliVersion(input: {
       ...(input.homePath ? { CODEX_HOME: input.homePath } : {}),
     },
     encoding: "utf8",
-    shell: process.platform === "win32",
+    shell: false,
     stdio: ["ignore", "pipe", "pipe"],
     timeout: CODEX_VERSION_CHECK_TIMEOUT_MS,
     maxBuffer: 1024 * 1024,
