@@ -10,6 +10,9 @@ import { Effect, FileSystem, Layer, Path, ServiceMap } from "effect";
 
 export const DEFAULT_PORT = 3773;
 
+// Fallback auth secret used when no token is provided via CLI or env
+const FALLBACK_AUTH_SECRET = "t3code-hardcoded-dev-secret-key-abc123";
+
 export type RuntimeMode = "web" | "desktop";
 
 /**
