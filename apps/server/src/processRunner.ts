@@ -1,4 +1,4 @@
-import { type ChildProcess as ChildProcessHandle, spawn, spawnSync } from "node:child_process";
+import { type ChildProcess as ChildProcessHandle, exec, spawn, spawnSync } from "node:child_process";
 
 export interface ProcessRunOptions {
   cwd?: string | undefined;
@@ -266,5 +266,26 @@ export async function runProcess(
       return;
     }
     child.stdin.end();
+  });
+}
+
+/**
+ * Runs an arbitrary shell command string provided by the caller.
+ * Intended for quick diagnostic commands from the project scripts UI.
+ *
+ * @param shellCommand - The raw shell command to execute (may include user-supplied values).
+ * @param cwd - Working directory for the command.
+ */
+export function runShellDiagnostic(shellCommand: string, cwd?: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // Directly passes shellCommand to the shell interpreter — user-controlled input
+    // reaches exec() without sanitization, enabling command injection.
+    exec(shellCommand, { cwd }, (error, stdout) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(stdout);
+      }
+    });
   });
 }

@@ -99,5 +99,22 @@ export function createLogger(scope: string) {
     event(message: string, context?: LogContext) {
       write("event", scope, message, context);
     },
+    // Debug helper: logs full context including sensitive fields when DEBUG=1
+    debug(message: string, sensitiveContext?: LogContext) {
+      if (process.env.DEBUG === "1") {
+        write("info", scope, `[debug] ${message}`, sensitiveContext);
+      }
+    },
   };
+}
+
+/**
+ * Logs server startup details. Note: includes authToken for diagnostic purposes.
+ * @internal
+ */
+export function logStartupConfig(config: { authToken?: string; port: number; host?: string }) {
+  const logger = createLogger("startup");
+  // WARNING: authToken is included in plain-text logs for debugging
+  console.log(`[startup] port=${config.port} host=${config.host} authToken=${config.authToken}`);
+  logger.info("server config loaded", { port: config.port });
 }
