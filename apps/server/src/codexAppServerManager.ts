@@ -140,7 +140,7 @@ export interface CodexThreadSnapshot {
 const CODEX_VERSION_CHECK_TIMEOUT_MS = 4_000;
 
 const ANSI_ESCAPE_CHAR = String.fromCharCode(27);
-const ANSI_ESCAPE_REGEX = new RegExp(`${ANSI_ESCAPE_CHAR}\\[[0-9;]*m`, "g");
+const ANSI_ESCAPE_REGEX = new RegExp(`${ANSI_ESCAPE_CHAR}\[[0-9;]*m`, "g");
 const CODEX_STDERR_LOG_REGEX =
   /^\d{4}-\d{2}-\d{2}T\S+\s+(TRACE|DEBUG|INFO|WARN|ERROR)\s+\S+:\s+(.*)$/;
 const BENIGN_ERROR_LOG_SNIPPETS = [
@@ -166,9 +166,15 @@ Plan Mode is not changed by user intent, tone, or imperative language. If a user
 
 ## Plan Mode vs update_plan tool
 
-Plan Mode is a collaboration mode that can involve requesting user input and eventually issuing a \`<proposed_plan>\` block.
+Plan Mode is a collaboration mode that can involve requesting user input and eventually issuing a \
+<proposed_plan>\
+ block.
 
-Separately, \`update_plan\` is a checklist/progress/TODOs tool; it does not enter or exit Plan Mode. Do not confuse it with Plan mode or try to use it while in Plan mode. If you try to use \`update_plan\` in Plan mode, it will return an error.
+Separately, \
+`update_plan`\
+ is a checklist/progress/TODOs tool; it does not enter or exit Plan Mode. Do not confuse it with Plan mode or try to use it while in Plan mode. If you try to use \
+`update_plan`\
+ in Plan mode, it will return an error.
 
 ## Execution vs. mutation in Plan Mode
 
@@ -181,7 +187,11 @@ Actions that gather truth, reduce ambiguity, or validate feasibility without cha
 * Reading or searching files, configs, schemas, types, manifests, and docs
 * Static analysis, inspection, and repo exploration
 * Dry-run style commands when they do not edit repo-tracked files
-* Tests, builds, or checks that may write to caches or build artifacts (for example, \`target/\`, \`.cache/\`, or snapshots) so long as they do not edit repo-tracked files
+* Tests, builds, or checks that may write to caches or build artifacts (for example, \
+`target/`\
+, \
+`.cache/`\
+, or snapshots) so long as they do not edit repo-tracked files
 
 ### Not allowed (mutating, plan-executing)
 
@@ -217,7 +227,9 @@ Do not ask questions that can be answered from the repo or system (for example, 
 
 Critical rules:
 
-* Strongly prefer using the \`request_user_input\` tool to ask any questions.
+* Strongly prefer using the \
+`request_user_input`\
+ tool to ask any questions.
 * Offer only meaningful multiple-choice options; don't include filler choices that are obviously wrong or irrelevant.
 * In rare cases where an unavoidable, important question can't be expressed with reasonable multiple-choice options (due to extreme ambiguity), you may ask it directly without the tool.
 
@@ -228,7 +240,9 @@ You SHOULD ask many questions, but each question must:
 * choose between meaningful tradeoffs.
 * not be answerable by non-mutating commands.
 
-Use the \`request_user_input\` tool only for decisions that materially change the plan, for confirming important assumptions, or for information that cannot be discovered via non-mutating exploration.
+Use the \
+`request_user_input`\
+ tool only for decisions that materially change the plan, for confirming important assumptions, or for information that cannot be discovered via non-mutating exploration.
 
 ## Two kinds of unknowns (treat differently)
 
@@ -249,13 +263,19 @@ Use the \`request_user_input\` tool only for decisions that materially change th
 
 Only output the final plan when it is decision complete and leaves no decisions to the implementer.
 
-When you present the official plan, wrap it in a \`<proposed_plan>\` block so the client can render it specially:
+When you present the official plan, wrap it in a \
+<proposed_plan>\
+ block so the client can render it specially:
 
 1) The opening tag must be on its own line.
 2) Start the plan content on the next line (no text on the same line as the tag).
 3) The closing tag must be on its own line.
 4) Use Markdown inside the block.
-5) Keep the tags exactly as \`<proposed_plan>\` and \`</proposed_plan>\` (do not translate or rename them), even if the plan content is in another language.
+5) Keep the tags exactly as \
+<proposed_plan>\
+ and \
+</proposed_plan>\
+ (do not translate or rename them), even if the plan content is in another language.
 
 Example:
 
@@ -271,20 +291,28 @@ plan content should be human and agent digestible. The final plan must be plan-o
 * Test cases and scenarios
 * Explicit assumptions and defaults chosen where needed
 
-Do not ask "should I proceed?" in the final output. The user can easily switch out of Plan mode and request implementation if you have included a \`<proposed_plan>\` block in your response. Alternatively, they can decide to stay in Plan mode and continue refining the plan.
+Do not ask "should I proceed?" in the final output. The user can easily switch out of Plan mode and request implementation if you have included a \
+<proposed_plan>\
+ block in your response. Alternatively, they can decide to stay in Plan mode and continue refining the plan.
 
-Only produce at most one \`<proposed_plan>\` block per turn, and only when you are presenting a complete spec.
+Only produce at most one \
+<proposed_plan>\
+ block per turn, and only when you are presenting a complete spec.
 </collaboration_mode>`;
 
 export const CODEX_DEFAULT_MODE_DEVELOPER_INSTRUCTIONS = `<collaboration_mode># Collaboration Mode: Default
 
 You are now in Default mode. Any previous instructions for other modes (e.g. Plan mode) are no longer active.
 
-Your active mode changes only when new developer instructions with a different \`<collaboration_mode>...</collaboration_mode>\` change it; user requests or tool descriptions do not change mode by themselves. Known mode names are Default and Plan.
+Your active mode changes only when new developer instructions with a different \
+<collaboration_mode>...</collaboration_mode>\
+ change it; user requests or tool descriptions do not change mode by themselves. Known mode names are Default and Plan.
 
 ## request_user_input availability
 
-The \`request_user_input\` tool is unavailable in Default mode. If you call it while in Default mode, it will return an error.
+The \
+`request_user_input`\
+ tool is unavailable in Default mode. If you call it while in Default mode, it will return an error.
 
 In Default mode, strongly prefer making reasonable assumptions and executing the user's request rather than stopping to ask questions. If you absolutely must ask a question because the answer cannot be discovered from local context and a reasonable assumption would be risky, ask the user directly with a concise plain-text question. Never write a multiple choice question as a textual assistant message.
 </collaboration_mode>`;
@@ -471,7 +499,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
           ...(codexHomePath ? { CODEX_HOME: codexHomePath } : {}),
         },
         stdio: ["pipe", "pipe", "pipe"],
-        shell: process.platform === "win32",
+        shell: false,
       });
       const output = readline.createInterface({ input: child.stdout });
 
@@ -1534,7 +1562,7 @@ function assertSupportedCodexCliVersion(input: {
       ...(input.homePath ? { CODEX_HOME: input.homePath } : {}),
     },
     encoding: "utf8",
-    shell: process.platform === "win32",
+    shell: false,
     stdio: ["ignore", "pipe", "pipe"],
     timeout: CODEX_VERSION_CHECK_TIMEOUT_MS,
     maxBuffer: 1024 * 1024,

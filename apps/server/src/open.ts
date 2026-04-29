@@ -235,7 +235,7 @@ export const launchDetached = (launch: EditorLaunch) =>
         child = spawn(launch.command, [...launch.args], {
           detached: true,
           stdio: "ignore",
-          shell: process.platform === "win32",
+          shell: false,
         });
       } catch (error) {
         return resume(
